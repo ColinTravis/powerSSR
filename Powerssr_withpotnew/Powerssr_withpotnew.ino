@@ -13,7 +13,9 @@
  3. Connect the center terminal of a 10K ohm potentiometer to ADC0. Also connnect the CW 
  terminal to 5V and the CCW terminal to GND.
  4. Connect the PowerSSR Tail +in terminal to Digital pin 4 and the -in terminal to GND.
- 
+ 5. Connect microphone GND to GND.
+ 6. Connect microphone VDD to 3.3v
+ 7. Connect microphone out to AIN0
  
 */
 
