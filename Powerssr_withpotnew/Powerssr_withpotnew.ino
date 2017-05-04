@@ -33,6 +33,7 @@ const byte interruptPin = 2;
 volatile byte state = LOW;
 
 void setup() {
+  Serial.begin(9600);
   pinMode(interruptPin, INPUT_PULLUP);
   pinMode(4, OUTPUT);                              // Set PSSR1 pin as output
   attachInterrupt(digitalPinToInterrupt(interruptPin),  zero_cross_detect, RISING);
@@ -67,8 +68,9 @@ void zero_cross_detect()
 
 void loop()                        // Main loop
 {
-  dim = analogRead(pot)/10;         // Read the pot value
+//  dim = analogRead(pot)/10;         // Read the pot value
+  dim = 109;
+  Serial.println(dim);
 }
-
 
 
