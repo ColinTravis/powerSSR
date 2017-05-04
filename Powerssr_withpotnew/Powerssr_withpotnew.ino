@@ -1,5 +1,5 @@
 /*
- AC_Dimmer_with_pot
+ AC_Dimmer_with_mic
  
  This sketch is a sample sketch using the ZeroCross Tail(ZCT) to generate a sync
  pulse to drive a PowerSSR Tail(PSSRT) for dimming ac lights.
@@ -31,14 +31,18 @@ int freqStep = 73;              // Adjust this value for full off PSSRT when pot
 int pot = 0;                    // External potentiometer connected to analog input pin 0
 const byte interruptPin = 2;
 volatile byte state = LOW;
+//=====SOUND
+const int sampleWindow = 100; // Sample window width in mS (50 mS = 20Hz)
+unsigned int sample;
+
 
 void setup() {
-  Serial.begin(9600);
   pinMode(interruptPin, INPUT_PULLUP);
   pinMode(4, OUTPUT);                              // Set PSSR1 pin as output
   attachInterrupt(digitalPinToInterrupt(interruptPin),  zero_cross_detect, RISING);
   Timer1.initialize(freqStep);
-  Timer1.attachInterrupt(dim_check,freqStep);
+//  Timer1.attachInterrupt(dim_check,freqStep);
+  Timer1.attachInterrupt(dim_check);
 }
 
 void dim_check() {                  // This function will fire the triac at the 
@@ -69,8 +73,33 @@ void zero_cross_detect()
 void loop()                        // Main loop
 {
 //  dim = analogRead(pot)/10;         // Read the pot value
-  dim = 102;
-  Serial.println(dim);
+
+   unsigned long startMillis= millis();  // Start of sample window
+   unsigned int peakToPeak = 0;   // peak-to-peak level
+ 
+   unsigned int signalMax = 0;
+   unsigned int signalMin = 1024;
+ 
+   // collect data for 50 mS
+   while (millis() - startMillis < sampleWindow)
+   {
+      sample = analogRead(0);
+      if (sample < 1024)  // toss out spurious readings
+      {
+         if (sample > signalMax)
+         {
+            signalMax = sample;  // save just the max levels
+         }
+         else if (sample < signalMin)
+         {
+            signalMin = sample;  // save just the min levels
+         }
+      }
+   }
+   peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
+   if (peakToPeak > 102) peakToPeak = 102;
+   dim = peakToPeak; 
+
 }
 
 
