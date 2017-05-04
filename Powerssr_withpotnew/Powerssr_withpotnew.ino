@@ -69,7 +69,7 @@ void zero_cross_detect()
 void loop()                        // Main loop
 {
 //  dim = analogRead(pot)/10;         // Read the pot value
-  dim = 109;
+  dim = 102;
   Serial.println(dim);
 }
 
