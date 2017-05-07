@@ -1,19 +1,129 @@
-var b = p5.board('COM3', 'arduino');
-var led;
+/*
+Serial write example
+Sends a byte to a webSocket server which sends the same byte
+out through a serial port.
+You can use this with the included Arduino example called PhysicalPixel.
+Works with P5 editor as the socket/serial server, version 0.5.5 or later.
+written 2 Oct 2015
+by Tom Igoe
+*/
+
+// Declare a "SerialPort" object
+var serial;
+
+var portName = '/dev/cu.usbmodem1421'; // fill in your serial port name here
+
+// this is the message that will be sent to the Arduino:
+var outMessage = 'H';
+
+
+var x = 0;
+var i = 102;
+var speed = 1;
+var stopSending = false;
 
 function setup() {
-  led = b.pin(13, 'LED');
+  createCanvas(windowWidth, windowHeight);
+
+  // make an instance of the SerialPort object
+  serial = new p5.SerialPort();
+
+  // Get a list the ports available
+  // You should have a callback defined to see the results. See gotList, below:
+  serial.list();
+
+  // Assuming our Arduino is connected,  open the connection to it
+  serial.open(portName);
+
+  // When you get a list of serial ports that are available
+  serial.on('list', gotList);
+
+  // When you some data from the serial port
+  serial.on('data', gotData);
+  frameRate(2)
 }
 
-function keyPressed() {
-  if (keyCode === LEFT_ARROW){
-    led.on();
-  } else if (keyCode === RIGHT_ARROW) {
-    led.off();
-  } else if (keyCode === UP_ARROW){
-    led.blink();
-    console.log('Hello, World!');
-  } else if (keyCode === DOWN_ARROW) {
-    led.noBlink();
+
+// Got the list of ports
+function gotList(thelist) {
+  console.log("List of Serial Ports:");
+  // theList is an array of their names
+  for (var i = 0; i < thelist.length; i++) {
+    // Display in the console
+    console.log(i + " " + thelist[i]);
   }
 }
+
+// Called when there is data available from the serial port
+function gotData() {
+  var currentString = serial.readLine();
+  console.log(currentString);
+}
+
+function draw() {
+  background(255,255,255);
+  fill(0,0,0);
+  text("click to change the LED", 10, 10);
+  frameRate(30)
+  // if (keyIsDown(72)){
+  //   serial.write(outMessage);
+  //   outMessage = 'L';
+  // } else if (keyIsDown(76)) {
+  //   serial.write(outMessage);
+  //   outMessage = 'H';
+  // }
+
+  // for (var b = 102; b >= 0; b--) {
+  //   console.log(b);
+  //   // serial.write(b)
+  // }
+
+  x += speed
+
+
+// for (i < 102; i++;) {
+//   console.log(i);
+// }
+
+  if (x >= 102 || x <= 0) {
+    // direction = -direction
+    speed = 0
+    stopSending = 'stop'
+    //flip the direction
+  }
+
+  if (keyIsDown(72)){
+    x = 0
+    speed = 1
+    stopSending = false
+  }
+
+  console.log(stopSending);
+  console.log(x);
+
+  serial.write(x)
+
+  sendCheck()
+}
+
+//END DRAW
+
+
+
+function sendCheck(){
+  if (stopSending === 'stop') {
+    console.log("Stop");
+  }
+}
+// When you click on the screen, the server sends H or L out the serial port
+
+
+
+// function mouseReleased() {
+//   serial.write(outMessage);
+//   if (outMessage === 'H') {
+//     outMessage = 'L';
+//   } else {
+//     outMessage = 'H';
+//   }
+// }
