@@ -8,11 +8,11 @@
  to your operating system.
  
  Connection to an Arduino Uno:
- 1. Connect the C terminal of the ZeroCross Tail to digital pin 2 with a 10K ohm pull up to 5V.
- 2. Connect the E terminal of the ZeroCross Tail to GND.
+ 1. Connect the C terminal of the ZeroCross Tail(GREEN) to digital pin 2 with a 10K ohm pull up to 5V.
+ 2. Connect the E terminal of the ZeroCross Tail (GREEN) to GND.
  3. Connect the center terminal of a 10K ohm potentiometer to ADC0. Also connnect the CW 
  terminal to 5V and the CCW terminal to GND.
- 4. Connect the PowerSSR Tail +in terminal to Digital pin 4 and the -in terminal to GND.
+ 4. Connect the PowerSSR Tail (RED) +in terminal to Digital pin 4 and the -in terminal to GND.
  5. Connect microphone GND to GND.
  6. Connect microphone VDD to 3.3v
  7. Connect microphone out to AIN0
@@ -99,7 +99,7 @@ void loop()                        // Main loop
          }
       }
    }
-   peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
+   peakToPeak = signalMin / 2;  // max - min = peak-peak amplitude
    if (peakToPeak > 102) peakToPeak = 102;
    dim = peakToPeak; 
    Serial.println(dim);
